@@ -31,7 +31,7 @@ jobs:
 
       - name: 发送到飞书
         env:
-          WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK }}
+          WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
         run: |
           curl -X POST -H "Content-Type: application/json" \
             -d '{
