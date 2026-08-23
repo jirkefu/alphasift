@@ -28,7 +28,7 @@ jobs:
           echo "is_trading=$IS_TRADING" >> $GITHUB_OUTPUT
 
       - name: 执行选股
-        if: ${{ steps.check_day.outputs.is_trading == 'true' || github.event_name == 'workflow_dispatch' }}
+        if: steps.check_day.outputs.is_trading == 'true' || github.event_name == 'workflow_dispatch'
         id: screen
         run: |
           alphasift screen resonance_20260823 --no-llm --max-output 10 --save-run > screen_output.txt 2>&1
@@ -43,5 +43,5 @@ jobs:
           webhook: ${{ secrets.FEISHU_WEBHOOK }}
           msg_type: text
           content: |
-            📊 选股策略结果：
+            📊 选股策略 (resonance_20260823) 结果如下：
             ${{ env.SCREEN_OUTPUT }}
