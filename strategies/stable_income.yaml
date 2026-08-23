@@ -1,0 +1,44 @@
+name: stable_income
+display_name: 稳健收益策略
+description: 低估值 + 低波动 + 高质量，控制风险、细水长流
+version: "1.0"
+category: value
+tags: [value, defensive, low_volatility, quality, low_price]
+
+style:
+  risk_profile: defensive
+  holding_period: medium_term
+  execution_style: value
+  market_regime: [risk_off, range_bound]
+
+screening:
+  enabled: true
+  market_scope: [cn]
+
+  hard_filters:
+    exclude_st: true
+    price_min: 2
+    price_max: 10
+    pe_ttm_min: 0
+    pe_ttm_max: 20
+    pb_min: 0
+    pb_max: 2.0
+    change_pct_min: -3.0
+    change_pct_max: 3.0
+    amount_min: 50000000
+
+  factor_weights:
+    value: 0.35
+    stability: 0.25
+    liquidity: 0.20
+    momentum: 0.10
+    activity: 0.10
+
+  scoring_profile:
+    activity_ideal_volume_ratio: 1.0
+    activity_ideal_turnover_rate: 1.5
+    stability_high_turnover_rate: 5.0
+    momentum_chase_start_pct: 3.0
+    momentum_downside_start_pct: -3.0
+
+  max_output: 3

@@ -34,7 +34,7 @@ jobs:
       - name: 运行选股
         id: run
         run: |
-          alphasift screen resonance_20260823 --no-llm --max-output 10 --save-run > out.txt
+          alphasift screen stable_income --no-llm --max-output 3 --save-run > out.txt
           cat out.txt
           echo "OUTPUT<<EOF" >> $GITHUB_ENV
           cat out.txt >> $GITHUB_ENV

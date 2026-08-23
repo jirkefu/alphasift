@@ -21,17 +21,17 @@ except Exception as e:
 
 picks = data.get('picks', [])
 if not picks:
-    content = "📊 选股策略完成，但未选出符合条件的股票。"
+    content = "📊 稳健收益策略完成，但未选出符合条件的股票。"
 else:
     lines = [
-        f"📊 选股策略 (resonance_20260823) 结果",
+        f"📊 稳健收益策略 (stable_income) 结果",
         f"📅 {time.strftime('%Y-%m-%d %H:%M')}",
-        f"📈 共扫描 {data.get('snapshot_count', 0)} 只股票，筛选后 {len(picks)} 只",
+        f"📈 共扫描 {data.get('snapshot_count', 0)} 只股票，精选 {len(picks)} 只",
         "",
         "| 排名 | 代码 | 名称 | 得分 | 涨跌幅% | PE | PB | 换手率% |",
         "|------|------|------|------|---------|----|----|---------|"
     ]
-    for p in picks[:10]:
+    for p in picks[:3]:
         lines.append(
             f"| {p.get('rank', '-')} | {p.get('code', '-')} | {p.get('name', '-')} | "
             f"{p.get('final_score', 0):.1f} | {p.get('change_pct', 0):.1f} | "

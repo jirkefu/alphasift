@@ -1,9 +1,9 @@
 name: resonance_20260823
-display_name: 多因子共振策略
-description: 自定义多因子共振策略
+display_name: 多因子共振策略（低价版）
+description: 动量+反转+量价多因子共振，股价低于10元
 version: "1.0"
 category: multi_factor
-tags: [momentum, reversal, volume, resonance]
+tags: [momentum, reversal, volume, resonance, low_price]
 
 style:
   risk_profile: balanced
@@ -14,15 +14,30 @@ style:
 screening:
   enabled: true
   market_scope: [cn]
+
+  hard_filters:
+    exclude_st: true
+    price_min: 2
+    price_max: 10              # 👈 关键：股价低于10元，一手低于1000元
+    pe_ttm_min: 0
+    pe_ttm_max: 30
+    pb_min: 0
+    pb_max: 3.0
+    change_pct_min: -5.0
+    change_pct_max: 5.0
+    amount_min: 30000000       # 成交额不低于3000万（确保流动性）
+
   factor_weights:
-    value: 0.1
-    momentum: 0.3
-    reversal: 0.2
-    activity: 0.3
+    value: 0.10
+    momentum: 0.30
+    reversal: 0.20
+    activity: 0.30
     liquidity: 0.05
     stability: 0.05
+
   scoring_profile:
     reversal_ideal_change_pct: -2.0
     activity_ideal_volume_ratio: 1.2
     activity_ideal_turnover_rate: 2.0
+
   max_output: 10
