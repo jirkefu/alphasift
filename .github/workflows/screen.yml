@@ -28,7 +28,7 @@ jobs:
           echo "is_trading=$IS_TRADING" >> $GITHUB_OUTPUT
 
       - name: 执行选股
-        if: steps.check_day.outputs.is_trading == 'true' || github.event_name == 'workflow_dispatch'
+        if: ${{ steps.check_day.outputs.is_trading == 'true' || github.event_name == 'workflow_dispatch' }}
         id: screen
         run: |
           alphasift screen resonance_20260823 --no-llm --max-output 10 --save-run > screen_output.txt 2>&1
