@@ -15,6 +15,14 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: 缓存 pip 依赖
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml', 'poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: 安装依赖
         run: |
           pip install --upgrade pip
@@ -33,11 +41,9 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
         run: |
+          # 提取前20行并转义
+          SUMMARY=$(cat out.txt | head -20 | sed 's/"/\\"/g' | awk '{printf "%s\\n", $0}')
+          MESSAGE="📊 选股策略 (resonance_20260823) 结果：\\n${SUMMARY}"
           curl -X POST -H "Content-Type: application/json" \
-            -d '{
-              "msg_type": "text",
-              "content": {
-                "text": "📊 选股策略 (resonance_20260823) 结果：\n${{ env.OUTPUT }}"
-              }
-            }' \
+            -d "{\"msg_type\":\"text\",\"content\":{\"text\":\"${MESSAGE}\"}}" \
             $WEBHOOK_URL
