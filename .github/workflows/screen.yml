@@ -9,6 +9,9 @@ on:
 jobs:
   screen:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write    # 👈 关键：授予写入权限
+
     steps:
       - name: 检出代码
         uses: actions/checkout@v6
@@ -47,5 +50,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add positions.json
-          git commit -m "更新持仓数据" || echo "无变更"
+          git commit -m "更新持仓数据 [skip ci]" || echo "无变更"
           git push
