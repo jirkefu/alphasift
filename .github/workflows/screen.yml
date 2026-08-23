@@ -24,13 +24,26 @@ jobs:
         id: run
         run: |
           alphasift screen resonance_20260823 --no-llm --max-output 10 --save-run > out.txt
-          cat out.txt
+          echo "SCREEN_OUTPUT<<EOF" >> $GITHUB_ENV
+          cat out.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: 发送到飞书
-        uses: junka/feishu-bot-webhook-action@master
-        with:
-          webhook: ${{ secrets.FEISHU_WEBHOOK }}
-          msg_type: text
-          content: |
-            选股结果：
-            $(cat out.txt)
+        env:
+          WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK }}
+        run: |
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "飞书 Webhook 未配置，跳过发送"
+            exit 0
+          fi
+          # 构造 JSON 消息
+          MESSAGE=$(cat <<'EOM'
+          {
+            "msg_type": "text",
+            "content": {
+              "text": "$(echo "$SCREEN_OUTPUT" | sed 's/"/\\"/g')"
+            }
+          }
+          EOM
+          )
+          curl -X POST -H "Content-Type: application/json" -d "$MESSAGE" "$WEBHOOK_URL"
