@@ -21,7 +21,14 @@ jobs:
           pip install -e .
           pip install akshare
 
-      - name: 执行选股策略
+      - name: 检查交易日
+        id: check_day
+        run: |
+          IS_TRADING=$(python scripts/check_trading_day.py)
+          echo "is_trading=$IS_TRADING" >> $GITHUB_OUTPUT
+
+      - name: 执行选股
+        if: steps.check_day.outputs.is_trading == 'true' || github.event_name == 'workflow_dispatch'
         id: screen
         run: |
           alphasift screen resonance_20260823 --no-llm --max-output 10 --save-run > screen_output.txt 2>&1
@@ -29,12 +36,12 @@ jobs:
           cat screen_output.txt >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: 发送选股结果到飞书
+      - name: 发送到飞书
         if: steps.screen.outcome == 'success'
         uses: junka/feishu-bot-webhook-action@master
         with:
           webhook: ${{ secrets.FEISHU_WEBHOOK }}
           msg_type: text
           content: |
-            📊 选股策略 (resonance_20260823) 结果如下：
+            📊 选股策略结果：
             ${{ env.SCREEN_OUTPUT }}
