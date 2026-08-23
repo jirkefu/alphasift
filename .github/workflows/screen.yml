@@ -37,13 +37,42 @@ jobs:
           cat out.txt >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: 发送到飞书
+      - name: 发送到飞书（带签名）
         env:
           WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
         run: |
-          # 提取前20行并转义
-          SUMMARY=$(cat out.txt | head -20 | sed 's/"/\\"/g' | awk '{printf "%s\\n", $0}')
-          MESSAGE="📊 选股策略 (resonance_20260823) 结果：\\n${SUMMARY}"
-          curl -X POST -H "Content-Type: application/json" \
-            -d "{\"msg_type\":\"text\",\"content\":{\"text\":\"${MESSAGE}\"}}" \
-            $WEBHOOK_URL
+          python -c "
+import hmac
+import hashlib
+import base64
+import json
+import time
+import os
+import subprocess
+
+webhook_url = os.environ['WEBHOOK_URL']
+secret = os.environ.get('WEBHOOK_SECRET')
+timestamp = int(time.time())
+
+# 读取输出内容（限制长度）
+with open('out.txt', 'r') as f:
+    content = f.read()[:3000]
+
+payload = {
+    'msg_type': 'text',
+    'content': {
+        'text': f'📊 选股策略 (resonance_20260823) 结果：\n{content}'
+    }
+}
+
+# 如果配置了签名，则添加 timestamp 和 sign
+if secret:
+    sign_str = f'{timestamp}\n{secret}'
+    sign = base64.b64encode(hmac.new(secret.encode('utf-8'), sign_str.encode('utf-8'), hashlib.sha256).digest()).decode('utf-8')
+    payload['timestamp'] = timestamp
+    payload['sign'] = sign
+
+cmd = ['curl', '-X', 'POST', '-H', 'Content-Type: application/json', '-d', json.dumps(payload), webhook_url]
+subprocess.run(cmd, check=True)
+"
