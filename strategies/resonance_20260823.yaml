@@ -1,0 +1,28 @@
+name: resonance_20260823
+display_name: 多因子共振策略
+description: 自定义多因子共振策略
+version: "1.0"
+category: multi_factor
+tags: [momentum, reversal, volume, resonance]
+
+style:
+  risk_profile: balanced
+  holding_period: short_term
+  execution_style: momentum
+  market_regime: [neutral]
+
+screening:
+  enabled: true
+  market_scope: [cn]
+  factor_weights:
+    value: 0.1
+    momentum: 0.3
+    reversal: 0.2
+    activity: 0.3
+    liquidity: 0.05
+    stability: 0.05
+  scoring_profile:
+    reversal_ideal_change_pct: -2.0
+    activity_ideal_volume_ratio: 1.2
+    activity_ideal_turnover_rate: 2.0
+  max_output: 10

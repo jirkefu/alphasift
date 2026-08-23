@@ -1,0 +1,64 @@
+name: 定时选股并发送到飞书
+
+on:
+  schedule:
+    - cron: '0 2 * * 1-5'
+    - cron: '0 6 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      force_run:
+        description: '强制运行（跳过交易日检查）'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  screen-and-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 安装依赖
+        run: |
+          pip install --upgrade pip
+          pip install -e .
+
+      - name: 检查是否为 A 股交易日
+        id: check_trading_day
+        run: |
+          python -c "
+import datetime
+import akshare as ak
+today = datetime.datetime.now().strftime('%Y%m%d')
+trade_days = ak.tool_trade_date_hist_sina()
+is_trading = today in trade_days['trade_date'].astype(str).values
+print(f'::set-output name=is_trading::{is_trading}')
+"
+        continue-on-error: true
+
+      - name: 执行选股策略
+        if: |
+          (steps.check_trading_day.outputs.is_trading == 'True') ||
+          (github.event.inputs.force_run == 'true')
+        id: screen
+        run: |
+          alphasift screen resonance_20260823 --no-llm --max-output 10 --save-run > screen_output.txt 2>&1
+          echo "SCREEN_OUTPUT<<EOF" >> $GITHUB_ENV
+          cat screen_output.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: 发送选股结果到飞书
+        if: steps.screen.outcome == 'success'
+        uses: junka/feishu-bot-webhook-action@master
+        with:
+          webhook: ${{ secrets.FEISHU_WEBHOOK }}
+          msg_type: text
+          content: |
+            📊 选股策略 (resonance_20260823) 结果如下：
+            ${{ env.SCREEN_OUTPUT }}
