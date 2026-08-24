@@ -7,11 +7,11 @@
     "hold_days": 3,
     "target_pct": 3.0,
     "stop_pct": -2.3,
-    "current_price": 3.47,
-    "change_pct": 0,
-    "days_held": 0,
+    "current_price": 3.5,
+    "change_pct": 0.8645533141210318,
+    "days_held": 1,
     "status": "hold",
-    "reason": "\u65b0\u5f00\u4ed3"
+    "reason": "\u6301\u6709\u4e2d (1/3\u5929)"
   },
   {
     "code": "601668",
@@ -21,11 +21,11 @@
     "hold_days": 3,
     "target_pct": 3.0,
     "stop_pct": -2.2,
-    "current_price": 4.39,
-    "change_pct": 0,
-    "days_held": 0,
+    "current_price": 4.42,
+    "change_pct": 0.6833712984054727,
+    "days_held": 1,
     "status": "hold",
-    "reason": "\u65b0\u5f00\u4ed3"
+    "reason": "\u6301\u6709\u4e2d (1/3\u5929)"
   },
   {
     "code": "601169",
@@ -36,6 +36,20 @@
     "target_pct": 3.0,
     "stop_pct": -2.3,
     "current_price": 5.09,
+    "change_pct": 0,
+    "days_held": 0,
+    "status": "hold",
+    "reason": "\u65b0\u5f00\u4ed3"
+  },
+  {
+    "code": "601818",
+    "name": "\u5149\u5927\u94f6\u884c",
+    "buy_price": 3.07,
+    "buy_date": "2026-08-24",
+    "hold_days": 3,
+    "target_pct": 3.0,
+    "stop_pct": -2.3,
+    "current_price": 3.07,
     "change_pct": 0,
     "days_held": 0,
     "status": "hold",
